@@ -28,10 +28,11 @@ app.get('/', (req, res) => {
 });
 
 // Rotas públicas
-app.use('/api/reports', reportRoutes);          // Relatórios PDF (liberado)
-app.use('/api/users/', usersRouter);       // Login
+app.post('/api/users/login', usersRouter);  // apenas login
+app.use('/api/reports', reportRoutes);      // PDF liberado
 
-// Rotas privadas (com autenticação)
+// Rotas privadas
+app.use('/api/users', authMiddleware, usersRouter);
 app.use('/api/points', authMiddleware, pointsRouter);
 app.use('/api/deliveries', authMiddleware, deliveriesRouter);
 app.use('/api/waste-types', authMiddleware, wasteTypesRouter);
