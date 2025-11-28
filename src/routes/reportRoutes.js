@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const pool = require("../Old_db");
+const pool = require("../db");
 
 const generatePointsReport = require("../reports/pointsReport");
 const generateUsersReport = require("../reports/usersReport");
