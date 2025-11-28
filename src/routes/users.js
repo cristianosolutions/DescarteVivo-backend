@@ -24,6 +24,7 @@ router.post('/login', async (req, res) => {
     }
 
     const user = result.rows[0];
+
     const passwordOk = await bcrypt.compare(password, user.password_hash);
 
     if (!passwordOk) {
@@ -32,7 +33,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || "segredo_dev",
+      process.env.JWT_SECRET || 'segredo_dev',
       { expiresIn: '4h' }
     );
 
@@ -52,12 +53,13 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
 // -----------------------------
-// TODAS AS ROTAS PRIVADAS A PARTIR DAQUI
+// A PARTIR DAQUI: ROTAS PROTEGIDAS
 // -----------------------------
 router.use(authMiddleware);
 
-// Criar usuário
+// POST /api/users - cadastrar usuário
 router.post('/', async (req, res) => {
   try {
     const { name, email, password, address, birth_date, role } = req.body;
@@ -85,14 +87,13 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Listar usuários
-router.get('/', async (req, res) => {
+// GET /api/users - listar usuários
+router.get('/', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, name, email, role, created_at FROM users ORDER BY created_at DESC'
     );
     res.json(result.rows);
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erro ao listar usuários.' });
